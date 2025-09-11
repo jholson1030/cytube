@@ -1070,3 +1070,84 @@ window.requestAnimFrame = (function() {
             window.setTimeout(callback, 1000 / 60);
         };
 })();
+
+
+(function () {
+    // === create the button once ===
+    function makeSpiderBtn() {
+      if (document.getElementById('Spiders')) return $('#Spiders');
+  
+      const $btn = $('<button/>', {
+        id: 'Spiders',
+        type: 'button',
+        title: 'Summon the swarm',
+        html: '🕷 Spiders 🕷'
+      })
+        .addClass('btn btn-warning') // theme-friendly; change classes if you like
+        .css({ margin: '0 6px' })
+        .on('click', function () {
+          if (confirm('Summon the swarm? *Warning, summoning multiple swarms is a bad idea!*')) {
+            new SpiderController({ minBugs: 50, maxBugs: 100, minDelay: 0, maxDelay: 10, minSpeed: 3, maxSpeed: 9, mouseOver: 'die' });
+            const Spiderdance = new Audio('https://cdn.discordapp.com/attachments/757083079289602180/758984846059372544/Spiderdance.mp3');
+            Spiderdance.volume = 0.10;
+            Spiderdance.play();
+          }
+        });
+  
+      return $btn;
+    }
+  
+    // === try several modern CyTube containers ===
+    const TARGETS = [
+      '#chatwrap .chat-footer .btn-group',
+      '#chatwrap .chat-footer',               // new chat footer
+      '#chatheader .btn-group',               // chat header buttons
+      '#plcontrol .btn-group',                // playlist controls
+      '#videocontrols .btn-group',            // video controls
+      '#rightcontrols',                       // some themes
+      '#leftcontrols'                         // legacy
+    ];
+  
+    function tryInsert() {
+      const $btn = makeSpiderBtn();
+      for (const sel of TARGETS) {
+        const $t = $(sel).first();
+        if ($t.length) {
+          $t.append($btn);
+          return true;
+        }
+      }
+      return false;
+    }
+  
+    // === fallback: floating action button ===
+    function pinIfNeeded() {
+      if ($('#Spiders').length) return;
+      const $btn = makeSpiderBtn()
+        .css({
+          position: 'fixed',
+          right: '14px',
+          bottom: '14px',
+          zIndex: 999999
+        });
+      $('body').append($btn);
+    }
+  
+    // Wait for DOM + dynamic layout
+    function init() {
+      if (tryInsert()) return;
+      // keep trying as CyTube builds the DOM
+      const iv = setInterval(() => {
+        if (tryInsert()) clearInterval(iv);
+      }, 600);
+      // final safety pin after a few seconds
+      setTimeout(pinIfNeeded, 4000);
+    }
+  
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      init();
+    } else {
+      document.addEventListener('DOMContentLoaded', init);
+    }
+  })();
+  
