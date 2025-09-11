@@ -1099,6 +1099,7 @@ window.requestAnimFrame = (function() {
   
     // === try several modern CyTube containers ===
     const TARGETS = [
+      '#tabs .et-hero-tabs'  
       '#chatwrap .chat-footer .btn-group',
       '#chatwrap .chat-footer',               // new chat footer
       '#chatheader .btn-group',               // chat header buttons
