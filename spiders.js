@@ -1073,157 +1073,56 @@ window.requestAnimFrame = (function() {
 
 
 /*!
- * Spider Swarm Button (Halloween Edition)
- * Based on Azusmidge’s spider swarm script
- * Updated by Zeb-Dev
+ * Spider Swarm Button – MOTD injection
  */
 
 (function () {
-  // === create the button ===
-  function makeSpiderBtn() {
-    if (document.getElementById('Spiders')) return $('#Spiders');
-
-    const $btn = $('<button/>', {
-      id: 'Spiders',
-      type: 'button',
-      title: 'Summon the swarm',
-      html: '🕷 Eclectic\'s Spiders 🕷'
-    })
-      .addClass('btn')
-      .css({ margin: '0 6px' })
-      .on('click', function () {
-        if (confirm('Summon the swarm? *Warning, summoning multiple swarms is a bad idea!*')) {
-          new SpiderController({
-            minBugs: 50,
-            maxBugs: 100,
-            minDelay: 0,
-            maxDelay: 10,
-            minSpeed: 3,
-            maxSpeed: 9,
-            mouseOver: 'die'
-          });
-
-          const Spiderdance = new Audio('https://cdn.discordapp.com/attachments/757083079289602180/758984846059372544/Spiderdance.mp3');
-          Spiderdance.volume = 0.10;
-          Spiderdance.play();
-        }
-      });
-
-    return $btn;
-  }
-
-  // === possible CyTube containers ===
-  const TARGETS = [
-    '#chatwrap .chat-footer .btn-group',
-    '#chatwrap .chat-footer',
-    '#chatheader .btn-group',
-    '#plcontrol .btn-group',
-    '#videocontrols .btn-group',
-    '#rightcontrols',
-    '#leftcontrols'
-  ];
-
-  function tryInsert() {
-    const $btn = makeSpiderBtn();
-    for (const sel of TARGETS) {
-      const $t = $(sel).first();
-      if ($t.length) {
-        $t.append($btn);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // === fallback: floating action button ===
-  function pinIfNeeded() {
-    if ($('#Spiders').length) return;
-    const $btn = makeSpiderBtn()
-      .css({
-        position: 'fixed',
-        right: '14px',
-        bottom: '14px',
-        zIndex: 999999
-      });
-    $('body').append($btn);
-  }
-
-  // Wait for DOM and dynamic layout
-  function init() {
-    if (tryInsert()) return;
-    const iv = setInterval(() => {
-      if (tryInsert()) clearInterval(iv);
-    }, 600);
-    setTimeout(pinIfNeeded, 4000);
-  }
-
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    init();
-  } else {
-    document.addEventListener('DOMContentLoaded', init);
-  }
-})();
-
-
-/*!
- * Spider Swarm Button – resilient injector for CyTube
- * Adds a themed button and spawns spiders on click.
- * Uses multiple container targets + MutationObserver + floating fallback.
- * Requires jQuery (CyTube provides it).
- */
-
-(function () {
-    // --- sanity check: jQuery ---
-    if (!window.jQuery) {
-      console.error('[Spiders] jQuery not found on page. Aborting.');
-      return;
-    }
+    if (!window.jQuery) return;
     const $ = window.jQuery;
   
-    // --- inject minimal theme CSS once ---
-    (function injectCSS() {
-      if (document.getElementById('spider-btn-style')) return;
-      const css = `
-        #Spiders.btn {
-          border: 3px solid #FF6600;
-          background:#000;
-          color:#FF6600;
-          text-transform:uppercase;
-          letter-spacing:.5px;
-          padding:6px 10px;
-          box-shadow:0 0 6px #FF6600,0 0 12px #FF6600,0 0 18px #FFB347;
-        }
-        #Spiders.btn:hover {
-          background:#FF6600; color:#000;
-          box-shadow:0 0 8px #FF6600,0 0 16px #FF6600,0 0 24px #FFB347;
-        }
-      `;
-      const style = document.createElement('style');
-      style.id = 'spider-btn-style';
-      style.textContent = css;
-      document.head.appendChild(style);
-    })();
-  
-    // --- button factory ---
     function makeSpiderBtn() {
-      const existing = document.getElementById('Spiders');
-      if (existing) return $('#Spiders');
+      if ($('#Spiders').length) return $('#Spiders');
   
       const $btn = $('<button/>', {
         id: 'Spiders',
         type: 'button',
-        title: 'Summon the swarm',
-        html: '🕷 Spiders 🕷'
+        html: '🕷 Spiders 🕷',
+        title: 'Summon the swarm'
       })
-        .addClass('btn')               // CyTube button baseline class
-        .css({ margin: '0 6px' })
+        .addClass('btn spider-btn')
+        .css({
+          border: '3px solid #FF6600',
+          background: '#000',
+          color: '#FF6600',
+          textTransform: 'uppercase',
+          letterSpacing: '.5px',
+          padding: '6px 10px',
+          margin: '4px',
+          boxShadow: '0 0 6px #FF6600,0 0 12px #FF6600,0 0 18px #FFB347'
+        })
+        .on('mouseenter', function () {
+          $(this).css({
+            background: '#FF6600',
+            color: '#000',
+            boxShadow: '0 0 8px #FF6600,0 0 16px #FF6600,0 0 24px #FFB347'
+          });
+        })
+        .on('mouseleave', function () {
+          $(this).css({
+            background: '#000',
+            color: '#FF6600',
+            boxShadow: '0 0 6px #FF6600,0 0 12px #FF6600,0 0 18px #FFB347'
+          });
+        })
         .on('click', function () {
-          if (confirm('Summon the swarm? *Warning: multiple swarms will overwhelm the page.*')) {
-            // Default swarm settings (tweak if you like)
+          if (confirm('Summon the swarm?')) {
             new SpiderController({
-              minBugs: 50, maxBugs: 100,
-              minDelay: 0, maxDelay: 10,
-              minSpeed: 3, maxSpeed: 9,
+              minBugs: 50,
+              maxBugs: 100,
+              minDelay: 0,
+              maxDelay: 10,
+              minSpeed: 3,
+              maxSpeed: 9,
               mouseOver: 'die'
             });
             const Spiderdance = new Audio('https://cdn.discordapp.com/attachments/757083079289602180/758984846059372544/Spiderdance.mp3');
@@ -1235,69 +1134,24 @@ window.requestAnimFrame = (function() {
       return $btn;
     }
   
-    // --- known good targets for your channel (based on your console output) ---
-    const TARGETS = [
-      '#chat-controls.btn-group',          // <= shown in your DOM
-      '#top-video-controls.btn-group',     // <= shown in your DOM
-      '#videocontrols.btn-group',          // <= shown in your DOM
-      '#plcontrol.btn-group',              // <= shown in your DOM
-      '#rightcontrols',                    // sometimes present
-      '#leftcontrols'                      // legacy
-    ];
-  
-    function tryInsert() {
-      const $btn = makeSpiderBtn();
-      for (const sel of TARGETS) {
-        const $t = $(sel).first();
-        if ($t.length) {
-          // If target is a .btn-group, append directly; otherwise just append.
-          $t.append($btn);
-          console.info(`[Spiders] Button inserted into: ${sel}`);
-          return true;
-        } else {
-          console.debug(`[Spiders] Target not found: ${sel}`);
-        }
+    function insertIntoMOTD() {
+      const $target = $('.motd-btn-group');
+      if ($target.length) {
+        const $btn = makeSpiderBtn();
+        $target.append($btn);
+        console.info('[Spiders] Button appended into .motd-btn-group');
+        return true;
       }
       return false;
     }
   
-    // floating fallback (always works)
-    function pinFloating() {
-      if ($('#Spiders').length) return;
-      const $btn = makeSpiderBtn().css({
-        position: 'fixed',
-        right: '14px',
-        bottom: '14px',
-        zIndex: 999999
-      });
-      $('body').append($btn);
-      console.warn('[Spiders] No known container found; using floating button.');
-    }
-  
-    // observe late DOM changes and re-try a few times
-    function observeAndAttach(timeoutMs = 6000) {
-      const observer = new MutationObserver(() => {
-        if ($('#Spiders').length) return;          // already placed
-        if (tryInsert()) observer.disconnect();
-      });
-      observer.observe(document.body, { childList: true, subtree: true });
-      // stop observing after timeout; pin floating if still missing
-      setTimeout(() => {
-        observer.disconnect();
-        if (!$('#Spiders').length) pinFloating();
-      }, timeoutMs);
-    }
-  
-    // init on ready or now if already interactive
     function init() {
-      if (tryInsert()) return;
-      // keep probing for a bit
+      if (insertIntoMOTD()) return;
+      // retry a few times in case MOTD loads late
       const iv = setInterval(() => {
-        if (tryInsert()) clearInterval(iv);
-      }, 400);
-      setTimeout(() => clearInterval(iv), 4000);
-      // also watch mutations
-      observeAndAttach(6000);
+        if (insertIntoMOTD()) clearInterval(iv);
+      }, 800);
+      setTimeout(() => clearInterval(iv), 6000);
     }
   
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -1306,4 +1160,3 @@ window.requestAnimFrame = (function() {
       document.addEventListener('DOMContentLoaded', init);
     }
   })();
-  
