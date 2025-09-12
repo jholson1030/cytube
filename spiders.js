@@ -1072,8 +1072,14 @@ window.requestAnimFrame = (function() {
 })();
 
 
+/*!
+ * Spider Swarm Button (Halloween Edition)
+ * Based on Azusmidge’s spider swarm script
+ * Updated by Zeb-Dev
+ */
+
 (function () {
-    // === create the button once ===
+    // === create the button ===
     function makeSpiderBtn() {
       if (document.getElementById('Spiders')) return $('#Spiders');
   
@@ -1081,13 +1087,22 @@ window.requestAnimFrame = (function() {
         id: 'Spiders',
         type: 'button',
         title: 'Summon the swarm',
-        html: '🕷 Spiders 🕷'
+        html: '🕷 Eclectic\'s Spiders 🕷'
       })
-        .addClass('btn btn-warning') // theme-friendly; change classes if you like
+        .addClass('btn')
         .css({ margin: '0 6px' })
         .on('click', function () {
           if (confirm('Summon the swarm? *Warning, summoning multiple swarms is a bad idea!*')) {
-            new SpiderController({ minBugs: 50, maxBugs: 100, minDelay: 0, maxDelay: 10, minSpeed: 3, maxSpeed: 9, mouseOver: 'die' });
+            new SpiderController({
+              minBugs: 50,
+              maxBugs: 100,
+              minDelay: 0,
+              maxDelay: 10,
+              minSpeed: 3,
+              maxSpeed: 9,
+              mouseOver: 'die'
+            });
+  
             const Spiderdance = new Audio('https://cdn.discordapp.com/attachments/757083079289602180/758984846059372544/Spiderdance.mp3');
             Spiderdance.volume = 0.10;
             Spiderdance.play();
@@ -1097,16 +1112,15 @@ window.requestAnimFrame = (function() {
       return $btn;
     }
   
-    // === try several modern CyTube containers ===
+    // === possible CyTube containers ===
     const TARGETS = [
-      '#tabs .et-hero-tabs'  
       '#chatwrap .chat-footer .btn-group',
-      '#chatwrap .chat-footer',               // new chat footer
-      '#chatheader .btn-group',               // chat header buttons
-      '#plcontrol .btn-group',                // playlist controls
-      '#videocontrols .btn-group',            // video controls
-      '#rightcontrols',                       // some themes
-      '#leftcontrols'                         // legacy
+      '#chatwrap .chat-footer',
+      '#chatheader .btn-group',
+      '#plcontrol .btn-group',
+      '#videocontrols .btn-group',
+      '#rightcontrols',
+      '#leftcontrols'
     ];
   
     function tryInsert() {
@@ -1134,14 +1148,12 @@ window.requestAnimFrame = (function() {
       $('body').append($btn);
     }
   
-    // Wait for DOM + dynamic layout
+    // Wait for DOM and dynamic layout
     function init() {
       if (tryInsert()) return;
-      // keep trying as CyTube builds the DOM
       const iv = setInterval(() => {
         if (tryInsert()) clearInterval(iv);
       }, 600);
-      // final safety pin after a few seconds
       setTimeout(pinIfNeeded, 4000);
     }
   
