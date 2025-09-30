@@ -1135,7 +1135,7 @@ window.requestAnimFrame = (function() {
     }
   
     function insertButton() {
-      const $target = $('.col-md-12');
+      const $target = $('div.col-lg-12.col-md-12');
       if ($target.length) {
         const $btn = makeSpiderBtn();
         $target.append($btn);
