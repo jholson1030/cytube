@@ -1134,22 +1134,22 @@ window.requestAnimFrame = (function() {
       return $btn;
     }
   
-    function insertIntoMOTD() {
-      const $target = $('.motd-btn-group');
+    function insertButton() {
+      const $target = $('.col-md-12');
       if ($target.length) {
         const $btn = makeSpiderBtn();
         $target.append($btn);
-        console.info('[Spiders] Button appended into .motd-btn-group');
+        console.info('[Spiders] Button appended into .col-md-12');
         return true;
       }
       return false;
     }
   
     function init() {
-      if (insertIntoMOTD()) return;
+      if (insertButton()) return;
       // retry a few times in case MOTD loads late
       const iv = setInterval(() => {
-        if (insertIntoMOTD()) clearInterval(iv);
+        if (insertButton()) clearInterval(iv);
       }, 800);
       setTimeout(() => clearInterval(iv), 6000);
     }
