@@ -1135,11 +1135,11 @@ window.requestAnimFrame = (function() {
     }
   
     function insertButton() {
-      const $target = $('div.col-lg-12.col-md-12');
+      const $target = $('#navtabs');
       if ($target.length) {
         const $btn = makeSpiderBtn();
         $target.append($btn);
-        console.info('[Spiders] Button appended into .col-md-12');
+        console.info('[Spiders] Button appended into #navtabs');
         return true;
       }
       return false;
